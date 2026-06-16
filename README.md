@@ -1,8 +1,7 @@
-# orbital rendezvous simulator
-A web orbital rendezvous simulator to show phasing orbits and transfer orbits and whatnot
-Currently in early dev, so now its just a graph of a satellite orbiting the earth
+# intercept-dynamics
+### orbital simulator
+A web orbital simulator to eventually show rendezvous phasing orbits and transfer orbits, and in the future, explain and represent orbital dynamics
+Currently in early dev, so now its just a simulation of a satellite orbiting the earth
 
-To run:
-1. install python 3.10 or higher
-2. install matplotlib and numpy
-3. run `python physics.py` in the terminal
+Visit the following github pages link for the current implementation:
+https://thought-ed.github.io/intercept-dynamics/

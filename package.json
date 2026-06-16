@@ -5,16 +5,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "troika-three-text": "^0.52.4"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vite": "^8.0.16"
   }
 }

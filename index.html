@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Orbital Rendezvous Simulator</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <script type="module" src="src/main.js"></script>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Rendezvous Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <script type="module" src="src/main.js"></script>
+    <div id="telemetry">
+        <div class="header">Lil' Sputnik</div>
+        <div class="sub">Satellite</div>
+
+        <div class="divider"></div>
+
+        <div class="row"><span>Alt</span><span id="altitude">--</span></div>
+        <div class="row"><span>Vel</span><span id="velocity">--</span></div>
+        <div class="row"><span>Energy</span><span id="energy">--</span></div>
+        <div class="row"><span>Angular Momentum</span><span id="momentum">--</span></div>
+        <div class="row"><span>Apogee</span><span id="apoapsis">--</span></div>
+        <div class="row"><span>Perigee</span><span id="periapsis">--</span></div>
+        <div class="row"><span>Orbital Period</span><span id="period">--</span></div>
+        <div class="row"><span>Vertical Speed</span><span id="vspeed">--</span></div>
+
+
+    </div>
+</body>
+
 </html>
