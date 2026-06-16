@@ -1,0 +1,20 @@
+{
+  "name": "orbitalrendezvous",
+  "version": "1.0.0",
+  "description": "A web orbital rendezvous simulator to show phasing orbits and transfer orbits and whatnot\r Currently in early dev, so now its just a graph of a satellite orbiting the earth",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.16"
+  }
+}
