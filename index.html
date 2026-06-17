@@ -1,36 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>intercept-dynamics</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>intercept-dynamics</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+	<body>
+		<div id="title">
+			<div class="title-main">intercept-dynamics</div>
+			<div class="title-sub">orbital simulation using physics (V0.1.2/b)</div>
+			<div class="title-controls">
+				wasd = attitude/thrust <br>
+				scroll = zoom <br>
+				drag = pan <br>
+			</div>
+		</div>
+		<script type="module" src="src/main.js"></script>
+		<div class="container">
+			<div id="settings" class="panel">
+				<div class="header">View Settings (INOP)</div>
+                <div class="divider"></div>
+				<div class="row">
+					<span>Show Velocity Vector</span>
+					<input type="checkbox" id="show-velocity" unchecked />
+				</div>
+				<div class="row">
+					<span>Show Orbit Path</span>
+					<input type="checkbox" id="show-orbit" unchecked />
+				</div>
+			</div>
+			<div id="telemetry" class="panel">
+				<div class="header">Lil' Sputnik</div>
+				<div class="sub">Satellite</div>
 
-<body>
-    <div id="title">
-        <div class="title-main">intercept-dynamics</div>
-        <div class="title-sub">orbital simulation using physics</div>
-</div>
-    <script type="module" src="src/main.js"></script>
-    <div id="telemetry">
-        <div class="header">Lil' Sputnik</div>
-        <div class="sub">Satellite</div>
+				<div class="divider"></div>
 
-        <div class="divider"></div>
-
-        <div class="row"><span>Alt</span><span id="altitude">--</span></div>
-        <div class="row"><span>Vel</span><span id="velocity">--</span></div>
-        <div class="row"><span>Energy</span><span id="energy">--</span></div>
-        <div class="row"><span>Angular Momentum</span><span id="momentum">--</span></div>
-        <div class="row"><span>Apogee</span><span id="apoapsis">--</span></div>
-        <div class="row"><span>Perigee</span><span id="periapsis">--</span></div>
-        <div class="row"><span>Orbital Period</span><span id="period">--</span></div>
-        <div class="row"><span>Vertical Speed</span><span id="vspeed">--</span></div>
-
-
-    </div>
-</body>
-
+				<div class="row"><span>Alt</span><span id="altitude">--</span></div>
+				<div class="row"><span>Vel</span><span id="velocity">--</span></div>
+				<div class="row"><span>Energy</span><span id="energy">--</span></div>
+				<div class="row">
+					<span>Angular Momentum</span><span id="momentum">--</span>
+				</div>
+				<div class="row"><span>Apogee</span><span id="apoapsis">--</span></div>
+				<div class="row">
+					<span>Perigee</span><span id="periapsis">--</span>
+				</div>
+				<div class="row">
+					<span>Orbital Period</span><span id="period">--</span>
+				</div>
+				<div class="row">
+					<span>Vertical Speed</span><span id="vspeed">--</span>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

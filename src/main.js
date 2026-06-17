@@ -1,206 +1,112 @@
-import * as THREE from 'three';
-import { Text } from 'troika-three-text'
+import * as THREE from "three";
+import { Text } from "troika-three-text";
 
 // functions import
-import { createScene } from './scene.js';
-import { physicsStep } from './physics.js';
-import { Satellite } from './satellite.js';
-import { MU, EARTH_RADIUS, SCALE, input, rotspeed, thrust } from './constants.js';
-import { computeTelemetry } from './telemetry.js';
-import { TechnicolorShader } from 'three/examples/jsm/Addons.js';
+import { createScene } from "./scene.js";
+import { physicsStep } from "./physics.js";
+import { Satellite } from "./satellite.js";
+import { updateTelemetryUI } from "./ui.js";
+import { computeTelemetry } from "./telemetry.js";
+import { TechnicolorShader } from "three/examples/jsm/Addons.js";
+import { createTrail, updateTrail } from "./trail.js";
+import { initializeControls, applyControls } from "./controls.js";
+import { updateSatelliteVisuals } from "./renderer.js";
+import { initializeCameraControls } from "./cameracontrols.js";
+import {
+	dt,
+	steps,
+	timescale,
+	SCALE,
+	input,
+	rotspeed,
+	thrust,
+	MU,
+	EARTH_RADIUS,
+	MAX_TRAIL
+} from "./constants.js";
 
 const state = {
-    satellite: null,
-    mesh: null,
-    text: null,
-    trail: [],
-    trailGeometry: null,
-    trailLine: null
+	satellite: null,
+	mesh: null,
+	text: null,
+	trailState: null,
 };
 
-const MAX_TRAIL = 2500
-const dt = 0.1
-const altitudeEl = document.getElementById("altitude")
-const velocityEl = document.getElementById("velocity")
-const energyEl = document.getElementById("energy")
-const momentumEl = document.getElementById("momentum")
-const periapsisEl = document.getElementById("periapsis")
-const apoapsisEl = document.getElementById("apoapsis")
-const periodEl = document.getElementById("period")
-const vspeedEl = document.getElementById("vspeed")
 
 
-const {
-    renderer,
-    camera,
-    scene,
-
-} = createScene(SCALE);
-
-window.addEventListener('keydown', (e) => {
-    if (e.key == 'w') input.w = true;
-    if (e.key == 'a') input.a = true;
-    if (e.key == 's') input.s = true;
-    if (e.key == 'd') input.d = true;
-});
-
-window.addEventListener('keyup', (e) => {
-    if (e.key == 'w') input.w = false;
-    if (e.key == 'a') input.a = false;
-    if (e.key == 's') input.s = false;
-    if (e.key == 'd') input.d = false;
-});
-
+const { renderer, camera, scene } = createScene(SCALE);
+initializeControls();
+initializeCameraControls(camera, renderer);
 
 // Sputnik Physics and Mesh join
 function createSatellite() {
-    state.satellite =
-        new Satellite(
-            EARTH_RADIUS + 500, // x
-            0, // y
-            0, // vx
-            8.15 // vy
-        );
+	state.satellite = new Satellite(
+		EARTH_RADIUS + 500, // x
+		0, // y
+		0, // vx
+		8.15, // vy
+	);
 
-    state.mesh =
-        new THREE.Mesh(
-            new THREE.ConeGeometry(2, 4, 8),
-            new THREE.MeshBasicMaterial({
-                color: 0xffffff
-            })
-        );
+	state.mesh = new THREE.Mesh(
+		new THREE.ConeGeometry(2, 5, 8),
+		new THREE.MeshBasicMaterial({
+			color: 0xffffff,
+		}),
+	);
 
-    scene.add(state.mesh)
-
+	scene.add(state.mesh);
 }
 // Add Sputnik Label
 function addText() {
-    const text = new Text();
+	const text = new Text();
 
-    text.text = "Lil' Sputnik :D";
-    text.fontSize = 8;
+	text.text = "Lil' Sputnik :D";
+	text.fontSize = 8;
 
-    text.font = './fonts/Roboto_Mono/RobotoMono-Regular.ttf';
+	text.font = "./fonts/Roboto_Mono/RobotoMono-Regular.ttf";
 
-    text.material.depthTest = false;
-    text.material.depthWrite = false;
+	text.material.depthTest = false;
+	text.material.depthWrite = false;
 
-    text.sync();
+	text.sync();
 
-    state.text = text;
-scene.add(state.text);;}
+	state.text = text;
+	scene.add(state.text);
+}
 
 // Add orbital trail
-function createOrbitalTrail() {
-    state.trail = []
-    state.trailGeometry = new THREE.BufferGeometry()
-    const trailMaterial = new THREE.LineBasicMaterial({ color: 0x0073EB })
-    state.trailLine = new THREE.Line(state.trailGeometry, trailMaterial);
-    scene.add(state.trailLine);
-}
 
-// Rotation and Attitude Logic
-function applyControls(state, dt) {
-    const sat = state.satellite;
-
-    const torque = rotspeed * dt;
-
-    if (input.a) sat.omega += torque;
-    if (input.d) sat.omega -= torque;
-
-    const dampingRate = 0.8;
-    sat.omega *= Math.exp(-dampingRate * dt);
-
-    const maxOmega = 2.5;
-    sat.omega = Math.max(-maxOmega, Math.min(maxOmega, sat.omega));
-
-    sat.angle += sat.omega * dt;
-
-    if (input.w) {
-        sat.vx += Math.cos(sat.angle) * thrust;
-        sat.vy += Math.sin(sat.angle) * thrust;
-    }
-
-    if (input.s) {
-        sat.vx -= Math.cos(sat.angle) * thrust;
-        sat.vy -= Math.sin(sat.angle) * thrust;
-    }
-}
-
+//
 //Actually move everything around
 
 //Woah, are you actually reading all this?
 //Nice, consider yourself based
 
 function animate() {
-    requestAnimationFrame(animate);
+	requestAnimationFrame(animate);
 
-    const dt = 0.1;      // smaller timestep
-    const steps = 10;    // 10 substeps per frame
-    const timescale = 3
-    const subDt = dt * timescale;
+	const subDt = dt * timescale;
 
-    for (let i = 0; i < steps; i++) {
-        physicsStep(state.satellite, dt*timescale, input); 
-        applyControls(state, subDt / steps);
-    }
+	for (let i = 0; i < steps; i++) {
+		physicsStep(state.satellite, dt * timescale, input);
+		applyControls(state, subDt / steps);
+	}
 
-    state.trail.push({ x: state.satellite.x, y: state.satellite.y });
+	updateTrail(
+		state.trailState,
+		state.satellite.x,
+		state.satellite.y,
+		SCALE,
+		MAX_TRAIL,
+	);
 
-    if (state.trail.length > MAX_TRAIL) {
-        state.trail.shift();
-    }
+	updateSatelliteVisuals(state, SCALE);
 
-    state.mesh.position.set(
-        state.satellite.x * SCALE,
-        state.satellite.y * SCALE,
-        0
-    );
-
-    state.mesh.rotation.z = state.satellite.angle - Math.PI / 2;
-
-    state.text.position.set(
-    state.mesh.position.x + 5,
-    state.mesh.position.y + 5.2,
-    0
-);
-
-    const positions = new Float32Array(state.trail.length * 3);
-
-    for (let i = 0; i < state.trail.length; i++) {
-        positions[i * 3] = state.trail[i].x * SCALE;
-        positions[i * 3 + 1] = state.trail[i].y * SCALE;
-        positions[i * 3 + 2] = 0;
-    }
-
-    state.trailGeometry.setAttribute(
-        "position",
-        new THREE.BufferAttribute(positions, 3)
-    );
-
-    state.trailGeometry.computeBoundingSphere();
-
-    const t = computeTelemetry(state.satellite);
-
-    altitudeEl.textContent = `${t.altitude.toFixed(2)}km`;
-    velocityEl.textContent = `${t.speed.toFixed(4)}km/s`;
-    energyEl.textContent = `${t.energy.toFixed(3)} km²/s²`;
-    momentumEl.textContent = `${t.momentum.toExponential(3)} km²/s`;
-    periapsisEl.textContent = `${t.periapsis.toFixed(3)} km`;
-    apoapsisEl.textContent = `${t.apoapsis.toFixed(3)} km`;
-    periodEl.textContent = `${t.period.toFixed(3)} units (dt)`;
-    vspeedEl.textContent = `${t.vspeed.toFixed(3)} km/s`;
-
-
-
-    renderer.render(
-        scene,
-        camera
-    );
-
+	updateTelemetryUI(state.satellite);
+	renderer.render(scene, camera);
 }
 
-createSatellite()
-addText()
-createOrbitalTrail()
-animate()
+createSatellite();
+addText();
+state.trailState = createTrail(scene);
+animate();
