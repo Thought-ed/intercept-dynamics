@@ -22,7 +22,7 @@ import {
 	thrust,
 	MU,
 	EARTH_RADIUS,
-	MAX_TRAIL
+	MAX_TRAIL,
 } from "./constants.js";
 
 const state = {
@@ -32,19 +32,19 @@ const state = {
 	trailState: null,
 };
 
-
-
-const { renderer, camera, scene } = createScene(SCALE);
+const { renderer, camera, scene, earth } = createScene(SCALE);
 initializeControls();
 initializeCameraControls(camera, renderer);
 
 // Sputnik Physics and Mesh join
 function createSatellite() {
 	state.satellite = new Satellite(
-		EARTH_RADIUS + 500, // x
-		0, // y
-		0, // vx
-		8.15, // vy
+		EARTH_RADIUS + 500,
+		0,
+		0,
+		0,
+		0,
+		-8.15,
 	);
 
 	state.mesh = new THREE.Mesh(
@@ -53,6 +53,9 @@ function createSatellite() {
 			color: 0xffffff,
 		}),
 	);
+	state.mesh.geometry.rotateX(Math.PI / 2);
+	state.mesh.geometry.rotateY(Math.PI / 1);
+
 
 	scene.add(state.mesh);
 }
@@ -95,7 +98,7 @@ function animate() {
 	updateTrail(
 		state.trailState,
 		state.satellite.x,
-		state.satellite.y,
+		state.satellite.z,
 		SCALE,
 		MAX_TRAIL,
 	);
@@ -104,6 +107,9 @@ function animate() {
 
 	updateTelemetryUI(state.satellite);
 	renderer.render(scene, camera);
+
+	earth.rotation.y += 0.001;
+	console.log("Y:", state.mesh.position.y);
 }
 
 createSatellite();

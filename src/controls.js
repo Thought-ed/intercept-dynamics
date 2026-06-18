@@ -18,26 +18,37 @@ export function initializeControls() {
 export function applyControls(state, dt) {
 	const sat = state.satellite;
 
+	// rotation is visual only (optional)
 	const torque = rotspeed * dt;
 
 	if (input.a) sat.omega += torque;
 	if (input.d) sat.omega -= torque;
 
-	const dampingRate = 0.8;
-	sat.omega *= Math.exp(-dampingRate * dt);
+	// damping
+	sat.omega *= Math.exp(-0.8 * dt);
 
 	const maxOmega = 2.5;
 	sat.omega = Math.max(-maxOmega, Math.min(maxOmega, sat.omega));
-
 	sat.angle += sat.omega * dt;
 
+	const vMag = Math.sqrt(sat.vx * sat.vx + sat.vz * sat.vz);
+
+	let dirX = 0;
+	let dirZ = 0;
+
+	if (vMag > 1e-6) {
+		dirX = sat.vx / vMag;
+		dirZ = sat.vz / vMag;
+
+    if (input.s) {
+		sat.vx -= dirX * thrust;
+		sat.vz -= dirZ * thrust;
+	}
+	}
 	if (input.w) {
-		sat.vx += Math.cos(sat.angle) * thrust;
-		sat.vy += Math.sin(sat.angle) * thrust;
+		sat.vx += dirX * thrust;
+		sat.vz += dirZ * thrust;
 	}
 
-	if (input.s) {
-		sat.vx -= Math.cos(sat.angle) * thrust;
-		sat.vy -= Math.sin(sat.angle) * thrust;
-	}
+
 }

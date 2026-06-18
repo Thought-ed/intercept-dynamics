@@ -16,8 +16,8 @@ export function createTrail(scene) {
 	};
 }
 
-export function updateTrail(trailState, x, y, scale, maxTrail) {
-	trailState.trail.push({ x, y });
+export function updateTrail(trailState, x, z, scale, maxTrail) {
+	trailState.trail.push({ x, z });
 
 	if (trailState.trail.length > maxTrail) {
 		trailState.trail.shift();
@@ -27,8 +27,8 @@ export function updateTrail(trailState, x, y, scale, maxTrail) {
 
 	for (let i = 0; i < trailState.trail.length; i++) {
 		positions[i * 3] = trailState.trail[i].x * scale;
-		positions[i * 3 + 1] = trailState.trail[i].y * scale;
-		positions[i * 3 + 2] = 0;
+		positions[i * 3 + 1] = trailState.trail[i].z * scale;
+		positions[i * 3 + 2] = trailState.trail[i].z * scale;
 	}
 
 	trailState.geometry.setAttribute(

@@ -2,15 +2,15 @@ import { MU, EARTH_RADIUS } from "./constants.js";
 
 export function computeTelemetry(state) {
 	const x = state.x;
-	const y = state.y;
+	const z = state.z;
 	const vx = state.vx;
-	const vy = state.vy;
+	const vz = state.vz;
 
-	const r = Math.sqrt(x * x + y * y);
-	const v2 = vx * vx + vy * vy;
+	const r = Math.sqrt(x * x + z * z);
+	const v2 = vx * vx + vz * vz;
 
 	const energy = v2 / 2 - MU / r;
-	const h = x * vy - y * vx;
+	const h = x * vz - z * vx;
 
 	const a = -MU / (2 * energy);
 
@@ -21,7 +21,7 @@ export function computeTelemetry(state) {
 
 	const T = 2 * Math.PI * Math.sqrt((a * a * a) / MU);
 
-	const vr = (x * vx + y * vy) / r;
+	const vr = (x * vx + z * vz) / r;
 
 	return {
 		altitude: r - EARTH_RADIUS,

@@ -1,10 +1,12 @@
 export class Satellite {
-	constructor(x, y, vx, vy) {
+	constructor(x, y, z, vx, vy, vz) {
 		this.x = x;
-		this.y = y;
+		this.z = z;
+        this.y = y;
 
 		this.vx = vx;
-		this.vy = vy;
+		this.vz = vz;
+        this.vy = vy;
 
 		this.angle = 0;
 		this.omega = 0;
