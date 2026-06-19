@@ -1,4 +1,4 @@
-import { computeTelemetry } from "./telemetry.js";
+import { computeTelemetry } from "../simulation/telemetry.js";
 
 // telemetry box
 const altitudeEl = document.getElementById("altitude");

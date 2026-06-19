@@ -1,4 +1,4 @@
-import { panSpeed } from "./constants";
+import { panSpeed } from "../core/constants";
 import * as THREE from "three";
 
 export function initializeCameraControls(camera, renderer) {

@@ -1,4 +1,4 @@
-import { MU, EARTH_RADIUS, SCALE } from "./constants.js";
+import { MU, EARTH_RADIUS, SCALE } from "../core/constants.js";
 const thrust = 0.0008;
 
 export function physicsStep(sat, dt) {

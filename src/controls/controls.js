@@ -1,4 +1,4 @@
-import { input, rotspeed, thrust } from "./constants";
+import { input, rotspeed, thrust } from "../core/constants";
 
 export function initializeControls() {
 	window.addEventListener("keydown", (e) => {

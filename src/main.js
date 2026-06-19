@@ -2,16 +2,16 @@ import * as THREE from "three";
 import { Text } from "troika-three-text";
 
 // functions import
-import { createScene } from "./scene.js";
-import { physicsStep } from "./physics.js";
-import { Satellite } from "./satellite.js";
-import { updateTelemetryUI } from "./ui.js";
-import { computeTelemetry } from "./telemetry.js";
+import { createScene } from "./core/scene.js";
+import { physicsStep } from "./simulation/physics.js";
+import { Satellite } from "./simulation/satellite.js";
+import { updateTelemetryUI } from "./ui/ui.js";
+import { computeTelemetry } from "./simulation/telemetry.js";
 import { TechnicolorShader } from "three/examples/jsm/Addons.js";
-import { createTrail, updateTrail } from "./trail.js";
-import { initializeControls, applyControls } from "./controls.js";
-import { updateSatelliteVisuals } from "./renderer.js";
-import { initializeCameraControls } from "./cameracontrols.js";
+import { createTrail, updateTrail } from "./simulation/trail.js";
+import { initializeControls, applyControls } from "./controls/controls.js";
+import { updateSatelliteVisuals } from "./core/renderer.js";
+import { initializeCameraControls } from "./controls/cameracontrols.js";
 import {
 	dt,
 	steps,
@@ -23,7 +23,7 @@ import {
 	MU,
 	EARTH_RADIUS,
 	MAX_TRAIL,
-} from "./constants.js";
+} from "./core/constants.js";
 
 const state = {
 	satellite: null,

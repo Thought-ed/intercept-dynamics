@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createEarthMaterial } from "./meshshader";
+import { createEarthMaterial } from "../graphics/meshshader";
 
 export function createScene(scale) {
 	const scene = new THREE.Scene();

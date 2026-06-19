@@ -1,4 +1,4 @@
-import { MU, EARTH_RADIUS } from "./constants.js";
+import { MU, EARTH_RADIUS } from "../core/constants.js";
 
 export function computeTelemetry(state) {
 	const x = state.x;
