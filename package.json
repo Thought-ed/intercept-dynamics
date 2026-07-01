@@ -1,6 +1,6 @@
 {
   "name": "orbitalrendezvous",
-  "version": "0.1.2-c",
+  "version": "0.1.3",
   "description": "A web orbital rendezvous simulator to show phasing orbits and transfer orbits and whatnot\r Currently in early dev, so now its just a graph of a satellite orbiting the earth",
   "main": "index.js",
   "scripts": {

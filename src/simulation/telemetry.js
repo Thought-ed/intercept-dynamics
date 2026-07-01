@@ -1,4 +1,5 @@
-import { MU, EARTH_RADIUS } from "../core/constants.js";
+import { EARTH_RADIUS } from "../core/constants.js";
+import { computeOrbitalElements } from "./orbitalElements.js";
 
 export function computeTelemetry(state) {
 	const x = state.x;
@@ -9,28 +10,22 @@ export function computeTelemetry(state) {
 	const r = Math.sqrt(x * x + z * z);
 	const v2 = vx * vx + vz * vz;
 
-	const energy = v2 / 2 - MU / r;
-	const h = x * vz - z * vx;
-
-	const a = -MU / (2 * energy);
-
-	const e = Math.sqrt(1 + (2 * energy * h * h) / (MU * MU));
-
-	const rp = a * (1 - e);
-	const ra = a * (1 + e);
-
-	const T = 2 * Math.PI * Math.sqrt((a * a * a) / MU);
-
 	const vr = (x * vx + z * vz) / r;
+
+	const elements = computeOrbitalElements(state);
 
 	return {
 		altitude: r - EARTH_RADIUS,
 		speed: Math.sqrt(v2),
-		energy,
-		momentum: h,
-		periapsis: rp - EARTH_RADIUS,
-		apoapsis: ra - EARTH_RADIUS,
-		period: T,
+		energy: elements.energy,
+		momentum: elements.h,
+		periapsis: elements.rp - EARTH_RADIUS,
+		apoapsis: elements.ra - EARTH_RADIUS,
+		period: elements.period,
 		vspeed: vr,
+		
+		// will implement in UI eventually
+		eccentricity: elements.e,
+		argumentOfPeriapsis: elements.omega,
 	};
 }

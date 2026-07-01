@@ -18,12 +18,12 @@ export function createTrail(scene) {
         varying float vAlpha;
 
         void main() {
-            gl_FragColor = vec4(0.0, 0.45, 0.92, vAlpha);
-        }
+			gl_FragColor = vec4(0.36, 0.65, 0.95, vAlpha);        }
     `,
 	});
 	const line = new THREE.Line(geometry, material);
 	scene.add(line);
+	line.renderOrder = 1;
 
 	return {
 		trail,
@@ -39,16 +39,16 @@ export function updateTrail(trailState, x, z, scale, maxTrail) {
 		trailState.trail.shift();
 	}
 
-    const count = trailState.trail.length;
+	const count = trailState.trail.length;
 	const positions = new Float32Array(trailState.trail.length * 3);
-    const alphas = new Float32Array(count);
+	const alphas = new Float32Array(count);
 
 	for (let i = 0; i < trailState.trail.length; i++) {
 		positions[i * 3] = trailState.trail[i].x * scale;
-		positions[i * 3 + 1] = 0
+		positions[i * 3 + 1] = 0;
 		positions[i * 3 + 2] = trailState.trail[i].z * scale;
 
-        alphas[i] = count > 1 ? i / (count -1) : 1
+		alphas[i] = count > 1 ? i / (count - 1) : 1;
 	}
 
 	trailState.geometry.setAttribute(
@@ -56,9 +56,9 @@ export function updateTrail(trailState, x, z, scale, maxTrail) {
 		new THREE.BufferAttribute(positions, 3),
 	);
 
-    trailState.geometry.setAttribute(
-        "alpha",
-        new THREE.BufferAttribute(alphas, 1)
-    )
+	trailState.geometry.setAttribute(
+		"alpha",
+		new THREE.BufferAttribute(alphas, 1),
+	);
 	trailState.geometry.computeBoundingSphere();
 }

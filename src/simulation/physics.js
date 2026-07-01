@@ -1,5 +1,4 @@
 import { MU, EARTH_RADIUS, SCALE } from "../core/constants.js";
-const thrust = 0.0008;
 
 export function physicsStep(sat, dt) {
 	const r = Math.sqrt(sat.x * sat.x + sat.z * sat.z);
@@ -20,4 +19,6 @@ export function physicsStep(sat, dt) {
 
 	sat.vx += 0.5 * ax2 * dt;
 	sat.vz += 0.5 * az2 * dt;
+
+	console.log("sat position", sat.x, sat.z)
 }

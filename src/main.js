@@ -12,6 +12,17 @@ import { createTrail, updateTrail } from "./simulation/trail.js";
 import { initializeControls, applyControls } from "./controls/controls.js";
 import { updateSatelliteVisuals } from "./core/renderer.js";
 import { initializeCameraControls } from "./controls/cameracontrols.js";
+import { computeOrbitalElements } from "./simulation/orbitalElements.js";
+import { viewConfig } from "./core/viewConfig.js";
+import {
+	updateOrbitLine,
+	createOrbitLine,
+	generateOrbitPoints,
+} from "./simulation/orbitLine.js";
+import { createOrbitPatches } from "./graphics/orbitPatches.js";
+import { updatePatch } from "./graphics/orbitPatches.js";
+import { extractPatch, getApsisPoints } from "./simulation/orbitPatchesUtil.js";
+
 import {
 	dt,
 	steps,
@@ -35,17 +46,13 @@ const state = {
 const { renderer, camera, scene, earth } = createScene(SCALE);
 initializeControls();
 initializeCameraControls(camera, renderer);
+state.orbitLine = createOrbitLine(scene);
+state.orbitPatches = createOrbitPatches(scene);
+
 
 // Sputnik Physics and Mesh join
 function createSatellite() {
-	state.satellite = new Satellite(
-		EARTH_RADIUS + 500,
-		0,
-		0,
-		0,
-		0,
-		-8.15,
-	);
+	state.satellite = new Satellite(EARTH_RADIUS + 500, 0, 0, 0, 0, -8.15);
 
 	state.mesh = new THREE.Mesh(
 		new THREE.ConeGeometry(2, 5, 8),
@@ -56,14 +63,13 @@ function createSatellite() {
 	state.mesh.geometry.rotateX(Math.PI / 2);
 	state.mesh.geometry.rotateY(Math.PI / 1);
 
-
 	scene.add(state.mesh);
 }
 // Add Sputnik Label
 function addText() {
 	const text = new Text();
 
-	text.text = "Lil' Sputnik :D";
+	text.text = "";
 	text.fontSize = 4;
 
 	text.font = "./fonts/Roboto_Mono/RobotoMono-Regular.ttf";
@@ -75,30 +81,32 @@ function addText() {
 
 	text.sync();
 
-	text.renderOrder = 0
+	text.renderOrder = 0;
 
 	state.text = text;
 	scene.add(state.text);
-	
 }
-
-// Add orbital trail
-
-//
-//Actually move everything around
 
 //Woah, are you actually reading all this?
 //Nice, consider yourself based
 
+//Actually move everything around
 function animate() {
 	requestAnimationFrame(animate);
 
 	const subDt = dt * timescale;
 
 	for (let i = 0; i < steps; i++) {
-		physicsStep(state.satellite, dt * timescale, input);
 		applyControls(state, subDt / steps);
+
+		physicsStep(state.satellite, dt * timescale, input);
 	}
+
+	state.satellite.orbit = computeOrbitalElements(state.satellite);
+
+	const points = generateOrbitPoints(state.satellite.orbit);
+
+	updateSatelliteVisuals(state, SCALE, camera);
 
 	updateTrail(
 		state.trailState,
@@ -108,13 +116,33 @@ function animate() {
 		MAX_TRAIL,
 	);
 
-	updateSatelliteVisuals(state, SCALE, camera);
+	state.trailState.line.visible = viewConfig.showTrail;
+	updateOrbitLine(state.orbitLine, state.satellite.orbit);
+	state.orbitLine.line.visible = viewConfig.showOrbit;
+
+	updatePatch(state.orbitPatches.peri, extractPatch(points, 0));
+
+	updatePatch(state.orbitPatches.apo, extractPatch(points, Math.PI));
+
+	const apsis = getApsisPoints(state.satellite.orbit);
+
+	state.orbitPatches.periMarker.position.set(
+		apsis.periapsis.x,
+		0,
+		apsis.periapsis.z,
+	);
+	state.orbitPatches.apoMarker.position.set(
+		apsis.apoapsis.x,
+		0,
+		apsis.apoapsis.z,
+	);
 
 	updateTelemetryUI(state.satellite);
 	renderer.render(scene, camera);
 
 	earth.rotation.y += 0.001;
-	console.log("Y:", state.mesh.position.y);
+	console.log("camera pos:", camera.position);
+	console.log("camera zoom:", camera.zoom);
 }
 
 createSatellite();
