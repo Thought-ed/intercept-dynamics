@@ -1,52 +1,62 @@
 import * as THREE from "three";
 
 export function createEarthMaterial() {
-    const earthMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            sunDirection: {
-                value: new THREE.Vector3(1, 0, 0).normalize(),
-            },
-            dayColor: {
-                value: new THREE.Color(0x80bcff),
-            },
-            nightColor: {
-                value: new THREE.Color(0x4f78a8),
-            },
-        },
-
-        vertexShader: `
-            varying vec3 vNormal;
-
-            void main() {
-                vNormal = normalize(normalMatrix * normal);
-
-                gl_Position =
-                    projectionMatrix *
-                    modelViewMatrix *
-                    vec4(position, 1.0);
+	const earthMaterial = new THREE.ShaderMaterial({
+		uniforms: {
+			sunDirection: {
+				value: new THREE.Vector3(1, 0, 0).normalize(),
+			},
+			dayColor: {
+				value: new THREE.Color(0x80bcff),
+			},
+			nightColor: {
+				value: new THREE.Color(0x4f78a8),
+			},
+            terminatorWidth: {
+                value: 0.15,
             }
-        `,
+		},
 
-        fragmentShader: `
-            uniform vec3 sunDirection;
-            uniform vec3 dayColor;
-            uniform vec3 nightColor;
+		vertexShader: `
+    varying vec3 vWorldNormal;
+    attribute float faceRandom;
+    varying float vFaceRandom;
 
-            varying vec3 vNormal;
+    void main() {
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vFaceRandom = faceRandom;
 
-            void main() {
+        gl_Position =
+            projectionMatrix *
+            modelViewMatrix *
+            vec4(position, 1.0);
+    }
+`,
 
-                float NdotL = dot(
-                    normalize(vNormal),
-                    normalize(sunDirection)
-                );
+		fragmentShader: `
+    uniform vec3 sunDirection;
+    uniform vec3 dayColor;
+    uniform vec3 nightColor;
+    uniform float terminatorWidth;
 
-                vec3 color = (NdotL > 0.0) ? dayColor : nightColor;
+    varying vec3 vWorldNormal;
+    varying float vFaceRandom;
 
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `,
-    });
+    void main() {
+        float NdotL = dot(
+            normalize(vWorldNormal),
+            normalize(sunDirection)
+        );
 
-    return earthMaterial;
+        float t = smoothstep(-terminatorWidth, terminatorWidth, NdotL);
+
+        vec3 base = mix(nightColor, dayColor, t);
+        vec3 color = base * (0.85 + vFaceRandom * 0.3);
+
+        gl_FragColor = vec4(color, 1.0);
+    }
+`,
+	});
+
+	return earthMaterial;
 }

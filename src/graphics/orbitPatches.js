@@ -34,6 +34,7 @@ function createPatchLine(color) {
 	});
 
 	const line = new THREE.Line(geometry, material);
+	line.frustumCulled = false
 	return { line, geometry, positions };
 }
 

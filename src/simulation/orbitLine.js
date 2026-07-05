@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { SCALE } from "../core/constants";
 
 export function generateOrbitPoints(elements, segments = 256) {
-	console.log("GENERATE ORBIT CALLED");
 	const { a, e, omega } = elements;
 	const points = [];
 
@@ -18,18 +17,12 @@ export function generateOrbitPoints(elements, segments = 256) {
 
 		x *= SCALE;
 		z *= SCALE;
-		console.log("first orbit point raw:", { xo, zo, x, z });
 
 		points.push({ x, z, nu });
 	}
 
-	console.log("orbit elements:", elements);
 
-	console.log("sample r/a/e:", {
-		a: elements.a,
-		e: elements.e,
-		omega: elements.omega,
-	});
+
 	return points;
 }
 

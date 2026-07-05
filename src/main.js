@@ -141,8 +141,6 @@ function animate() {
 	renderer.render(scene, camera);
 
 	earth.rotation.y += 0.001;
-	console.log("camera pos:", camera.position);
-	console.log("camera zoom:", camera.zoom);
 }
 
 createSatellite();

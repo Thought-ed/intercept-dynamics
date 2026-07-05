@@ -29,15 +29,30 @@ export function createScene(scale) {
 
 	document.body.appendChild(renderer.domElement);
 
-	const earthGeometry = new THREE.SphereGeometry(6378 * scale, 20, 20);
+	let earthGeometry = new THREE.SphereGeometry(6378 * scale, 16, 16);
+
+	earthGeometry = earthGeometry.toNonIndexed();
+
+	earthGeometry.computeVertexNormals();
 
 	const earthMaterial = createEarthMaterial();
 
 	const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 
+	const count = earthGeometry.attributes.position.count;
+	const faceCount = count / 3;
+	const rand = new Float32Array(count);
+	for (let i = 0; i < faceCount; i++) {
+		const r = Math.random();
+		rand[i * 3] = r;
+		rand[i * 3 + 1] = r;
+		rand[i * 3 + 2] = r;
+	}
+	earthGeometry.setAttribute("faceRandom", new THREE.BufferAttribute(rand, 1));
+
 	scene.add(earth);
 
-	const gridGeometry = new THREE.SphereGeometry(6378 * scale * 1.01, 20, 12);
+	/* const gridGeometry = new THREE.SphereGeometry(6378 * scale * 1.01, 20, 12);
 
 	const gridMaterial = new THREE.MeshBasicMaterial({
 		color: 0x9ecbff,
@@ -50,6 +65,7 @@ export function createScene(scale) {
 	const earthGrid = new THREE.Mesh(gridGeometry, gridMaterial);
 
 	earth.add(earthGrid);
+	*/
 	const atmosphereGeometry = new THREE.SphereGeometry(
 		6378 * scale * 1.015,
 		64,
@@ -98,6 +114,17 @@ export function createScene(scale) {
 	const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
 
 	scene.add(atmosphere);
+
+	window.addEventListener("resize", () => {
+		const aspect = window.innerWidth / window.innerHeight;
+		camera.left = (frustumSize * aspect) / -2;
+		camera.right = (frustumSize * aspect) / 2;
+		camera.top = frustumSize / 2;
+		camera.bottom = frustumSize / -2;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	});
 
 	return {
 		renderer,
