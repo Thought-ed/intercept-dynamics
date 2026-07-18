@@ -22,7 +22,14 @@ import {
 import { createOrbitPatches } from "./graphics/orbitPatches.js";
 import { updatePatch } from "./graphics/orbitPatches.js";
 import { extractPatch, getApsisPoints } from "./simulation/orbitPatchesUtil.js";
-import { createThrustTrail, updateThrustTrail } from "./simulation/thrustTrail.js";
+import {
+	createThrustTrail,
+	updateThrustTrail,
+} from "./simulation/thrustTrail.js";
+import {
+	createOrbitSchematic,
+	updateOrbitSchematic,
+} from "./ui/orbitSchematic.js";
 import {
 	dt,
 	steps,
@@ -51,7 +58,7 @@ initializeCameraControls(camera, renderer);
 state.orbitLine = createOrbitLine(scene);
 state.orbitPatches = createOrbitPatches(scene);
 state.thrustTrailState = createThrustTrail(scene);
-
+createOrbitSchematic();
 
 // Sputnik Physics and Mesh join
 function createSatellite() {
@@ -94,14 +101,24 @@ function computeTrail() {
 	const angle = state.satellite.angle;
 	const fx = Math.sin(angle);
 	const fz = Math.cos(angle);
-	
+
 	const isThrusting = input.w;
-	const exhaustSign = input.s ? -1 : input.w ? 1 : 0; // Opposite of applied DeltaV
-	
+	const exhaustSign =
+		input.s ? -1
+		: input.w ? 1
+		: 0; // Opposite of applied DeltaV
+
 	const nozzleX = state.satellite.x + fx * exhaustSign * nozzleOffset;
 	const nozzleZ = state.satellite.z + fz * exhaustSign * nozzleOffset;
 
-	updateThrustTrail(state.thrustTrailState, nozzleX, nozzleZ, isThrusting, SCALE, 40)
+	updateThrustTrail(
+		state.thrustTrailState,
+		nozzleX,
+		nozzleZ,
+		isThrusting,
+		SCALE,
+		40,
+	);
 }
 
 //Woah, are you actually reading all this?
@@ -133,30 +150,39 @@ function animate() {
 		MAX_TRAIL,
 	);
 
-	computeTrail()
+	computeTrail();
+
+	updateOrbitLine(state.orbitLine, state.satellite.orbit);
 
 	state.trailState.line.visible = viewConfig.showTrail;
-	updateOrbitLine(state.orbitLine, state.satellite.orbit);
 	state.orbitLine.line.visible = viewConfig.showOrbit;
 
-	updatePatch(state.orbitPatches.peri, extractPatch(points, 0));
+	state.orbitPatches.peri.line.visible = viewConfig.showOrbit;
 
-	updatePatch(state.orbitPatches.apo, extractPatch(points, Math.PI));
+	state.orbitPatches.apo.line.visible = viewConfig.showOrbit;
 
-	const apsis = getApsisPoints(state.satellite.orbit);
+	state.orbitPatches.periMarker.visible = viewConfig.showOrbit;
 
-	state.orbitPatches.periMarker.position.set(
-		apsis.periapsis.x,
-		0,
-		apsis.periapsis.z,
-	);
-	state.orbitPatches.apoMarker.position.set(
-		apsis.apoapsis.x,
-		0,
-		apsis.apoapsis.z,
-	);
+	state.orbitPatches.apoMarker.visible = viewConfig.showOrbit;
+
+	if (viewConfig.showOrbit) {
+		updatePatch(state.orbitPatches.peri, extractPatch(points, 0));
+		updatePatch(state.orbitPatches.apo, extractPatch(points, Math.PI));
+		const apsis = getApsisPoints(state.satellite.orbit);
+		state.orbitPatches.periMarker.position.set(
+			apsis.periapsis.x,
+			0,
+			apsis.periapsis.z,
+		);
+		state.orbitPatches.apoMarker.position.set(
+			apsis.apoapsis.x,
+			0,
+			apsis.apoapsis.z,
+		);
+	}
 
 	updateTelemetryUI(state.satellite);
+	updateOrbitSchematic(state.satellite, input.w);
 	renderer.render(scene, camera);
 
 	earth.rotation.y += 0.001;

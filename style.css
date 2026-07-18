@@ -209,3 +209,25 @@ canvas {
     border-left: none;
     border-top: none;
 }
+
+.schematic-panel {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 180px
+}
+
+.schematic-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 4px;
+}
+
+#schematic-orbit {
+    vector-effect: non-scaling-stroke;
+}
+
+#schematic-craft {
+    fill: #F5F7FA;
+}

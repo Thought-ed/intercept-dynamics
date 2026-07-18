@@ -19,5 +19,4 @@ export function physicsStep(sat, dt) {
 
 	sat.vx += 0.5 * ax2 * dt;
 	sat.vz += 0.5 * az2 * dt;
-
 }
