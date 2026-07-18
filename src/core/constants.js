@@ -5,9 +5,12 @@ export const timescale = 3
 export const SCALE = 0.01; // 1 unit = 100 km
 export const panSpeed = 0.4
 
+
+// Ship characteristics
 export const rotspeed = 0.05
-export const thrust = 0.002
+export const thrust = 0.001
 export const MAX_TRAIL = 1000
+export const nozzleOffset = 270
 
 export const input = {
     w: false,

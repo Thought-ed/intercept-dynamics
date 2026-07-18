@@ -37,8 +37,8 @@ export function applyControls(state, dt) {
 	const dirZ = Math.cos(sat.angle);
 
 	if (input.s) {
-		sat.vx += dirX * thrust;
-		sat.vz += dirZ * thrust;
+		sat.vx += dirX * (thrust/3);
+		sat.vz += dirZ * (thrust/3);
 	}
 
 	if (input.w) {

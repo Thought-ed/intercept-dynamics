@@ -22,7 +22,7 @@ import {
 import { createOrbitPatches } from "./graphics/orbitPatches.js";
 import { updatePatch } from "./graphics/orbitPatches.js";
 import { extractPatch, getApsisPoints } from "./simulation/orbitPatchesUtil.js";
-
+import { createThrustTrail, updateThrustTrail } from "./simulation/thrustTrail.js";
 import {
 	dt,
 	steps,
@@ -34,6 +34,7 @@ import {
 	MU,
 	EARTH_RADIUS,
 	MAX_TRAIL,
+	nozzleOffset,
 } from "./core/constants.js";
 
 const state = {
@@ -41,6 +42,7 @@ const state = {
 	mesh: null,
 	text: null,
 	trailState: null,
+	thrustTrailState: null,
 };
 
 const { renderer, camera, scene, earth } = createScene(SCALE);
@@ -48,6 +50,7 @@ initializeControls();
 initializeCameraControls(camera, renderer);
 state.orbitLine = createOrbitLine(scene);
 state.orbitPatches = createOrbitPatches(scene);
+state.thrustTrailState = createThrustTrail(scene);
 
 
 // Sputnik Physics and Mesh join
@@ -87,6 +90,20 @@ function addText() {
 	scene.add(state.text);
 }
 
+function computeTrail() {
+	const angle = state.satellite.angle;
+	const fx = Math.sin(angle);
+	const fz = Math.cos(angle);
+	
+	const isThrusting = input.w;
+	const exhaustSign = input.s ? -1 : input.w ? 1 : 0; // Opposite of applied DeltaV
+	
+	const nozzleX = state.satellite.x + fx * exhaustSign * nozzleOffset;
+	const nozzleZ = state.satellite.z + fz * exhaustSign * nozzleOffset;
+
+	updateThrustTrail(state.thrustTrailState, nozzleX, nozzleZ, isThrusting, SCALE, 40)
+}
+
 //Woah, are you actually reading all this?
 //Nice, consider yourself based
 
@@ -115,6 +132,8 @@ function animate() {
 		SCALE,
 		MAX_TRAIL,
 	);
+
+	computeTrail()
 
 	state.trailState.line.visible = viewConfig.showTrail;
 	updateOrbitLine(state.orbitLine, state.satellite.orbit);
