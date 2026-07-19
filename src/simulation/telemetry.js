@@ -1,4 +1,4 @@
-import { EARTH_RADIUS } from "../core/constants.js";
+import { EARTH_RADIUS, MU, baseTimeCompression } from "../core/constants.js";
 import { computeOrbitalElements } from "./orbitalElements.js";
 
 export function computeTelemetry(state) {
@@ -12,7 +12,7 @@ export function computeTelemetry(state) {
 
 	const vr = (x * vx + z * vz) / r;
 
-	const elements = computeOrbitalElements(state);
+	const elements = computeOrbitalElements(state); 
 
 	return {
 		altitude: r - EARTH_RADIUS,
@@ -22,6 +22,7 @@ export function computeTelemetry(state) {
 		periapsis: elements.rp - EARTH_RADIUS,
 		apoapsis: elements.ra - EARTH_RADIUS,
 		period: elements.period,
+		periodMinutes: elements.period / baseTimeCompression / 60,
 		vspeed: vr,
 		
 		// will implement in UI eventually

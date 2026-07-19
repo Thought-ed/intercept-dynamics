@@ -10,6 +10,13 @@ const apoapsisEl = document.getElementById("apoapsis");
 const periodEl = document.getElementById("period");
 const vspeedEl = document.getElementById("vspeed");
 
+function formatMinSec(totalSeconds) {
+	const sign = totalSeconds < 0 ? "-" : "";
+	const abs = Math.abs(totalSeconds)
+	const minutes = Math.floor(abs / 60)
+	const seconds = Math.floor(abs % 60)
+	return `${sign}${minutes}m ${seconds}s`
+}
 
 export function updateTelemetryUI(satellite) {
 	const t = computeTelemetry(satellite);
@@ -20,7 +27,7 @@ export function updateTelemetryUI(satellite) {
 	momentumEl.textContent = `${t.momentum.toExponential(3)} km²/s`;
 	periapsisEl.textContent = `${t.periapsis.toFixed(3)} km`;
 	apoapsisEl.textContent = `${t.apoapsis.toFixed(3)} km`;
-	periodEl.textContent = `${t.period.toFixed(3)} units (dt)`;
+	periodEl.textContent = formatMinSec(t.periodMinutes * 60);
 	vspeedEl.textContent = `${t.vspeed.toFixed(3)} km/s`;
 }
 

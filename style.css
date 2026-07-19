@@ -75,7 +75,7 @@ body {
 
     margin-top: 12px;
 
-    background: var(--telemetry-dim);
+    background: var(--slate-dim);
 }
 
 /* main panel */
@@ -104,6 +104,7 @@ body {
     background: var(--telemetry-dim);
     margin: 8px 0;
 }
+
 
 /* rows */
 .row {
@@ -230,4 +231,118 @@ canvas {
 
 #schematic-craft {
     fill: #F5F7FA;
+}
+
+#timewarp-slider {
+    width: 100%;
+    height: 2px;    
+    margin: 8px 0 8px;
+    background: var(--slate-dim);
+    accent-color: var(--telemetry);
+}
+
+#hud-bar {
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 360px;
+
+    background: #000000bf;
+    border: 1px solid var(--slate-dim);
+    backdrop-filter: blur(8px);
+    padding: 8px 20px;
+    border-radius: 6px;
+    z-index: 10;
+}
+
+.hud-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hud-playback {
+    display: flex;
+    align-items: center;
+    gap: 6px    
+}
+
+.hud-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 4px;
+}
+
+.hud-btn:hover {
+    color: var(--telemetry)
+}
+
+.hud-btn-play {
+    font-size: 0.6rem;
+}
+
+.hud-value {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--telemetry);
+    min-width: 1.6em;
+    margin-left: 4px;
+}
+
+.hud-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--slate-dim);
+}
+
+.hud-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem
+}
+
+.hud-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2em;
+    padding: 1px 4px;
+    border: 1px solid var(--slate-dim);
+    border-radius: 3px;
+    color: var(--white);
+}
+
+.hud-desc {
+    color: var(--slate);
+    margin-right: 6px;
+}
+
+.hud-caption {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate);
+
+    z-index: 10;
 }

@@ -11,17 +11,12 @@
 		<div id="title">
 			<div class="title-main">intercept-dynamics</div>
 			<div class="title-sub">orbital simulation using physics (V0.1.4)</div>
-			<div class="title-controls">
-				wasd = attitude/thrust <br>
-				scroll = zoom <br>
-				middle/right click + drag = pan <br>
-			</div>
 		</div>
 		<script type="module" src="src/main.js"></script>
 		<div class="container">
 			<div id="settings" class="panel">
 				<div class="header">View Settings</div>
-                <div class="divider"></div>
+				<div class="divider"></div>
 				<div class="row">
 					<span hidden>Show force vectors</span>
 					<input hidden type="checkbox" id="show-velocity" unchecked />
@@ -58,6 +53,40 @@
 					<span>Vertical Speed</span><span id="vspeed">--</span>
 				</div>
 			</div>
+		</div>
+		<div id="hud-bar">
+			<div class="hud-bar-content">
+				<div class="hud-playback">
+					<button id="timewarp-decrease" class="hud-btn" aria-label="Slow down">
+						«
+					</button>
+					<button
+						id="timewarp-play"
+						class="hud-btn hud-btn-play"
+						aria-label="Play or pause"
+					>
+						▶
+					</button>
+					<button id="timewarp-increase" class="hud-btn" aria-label="Speed up">
+						»
+					</button>
+					<span id="timewarp-value" class="hud-value">1x</span>
+				</div>
+				<div class="hud-divider"></div>
+				<div class="hud-controls">
+					<span class="hud-key">W</span><span class="hud-desc">thrust</span>
+					<span class="hud-key">A</span><span class="hud-key">D</span
+					><span class="hud-desc">rotate</span>
+				</div>
+			</div>
+			<input
+				type="range"
+				id="timewarp-slider"
+				min="0"
+				max="7"
+				step="1"
+				value="0"
+			/>
 		</div>
 	</body>
 </html>

@@ -33,7 +33,6 @@ import {
 import {
 	dt,
 	steps,
-	timescale,
 	SCALE,
 	input,
 	rotspeed,
@@ -43,6 +42,7 @@ import {
 	MAX_TRAIL,
 	nozzleOffset,
 } from "./core/constants.js";
+import { step, sub } from "three/tsl";
 
 const state = {
 	satellite: null,
@@ -51,6 +51,21 @@ const state = {
 	trailState: null,
 	thrustTrailState: null,
 };
+
+// timewarp controls
+const timewarpLevels = [1, 2, 5, 10, 25, 50, 100, 1000];
+let timeWarpFactor = timewarpLevels[0];
+
+const timewarpSlider = document.getElementById("timewarp-slider");
+const timewarpValue = document.getElementById("timewarp-value");
+
+timewarpValue.textContent = `${timeWarpFactor}x`;
+
+
+timewarpSlider.addEventListener("input", (e) => {
+	timeWarpFactor = timewarpLevels[Number(e.target.value)];
+	timewarpValue.textContent = `${timeWarpFactor}x`;
+});
 
 const { renderer, camera, scene, earth } = createScene(SCALE);
 initializeControls();
@@ -128,12 +143,13 @@ function computeTrail() {
 function animate() {
 	requestAnimationFrame(animate);
 
-	const subDt = dt * timescale;
+	const subDt = dt * timeWarpFactor;
+	const realSubDt = dt / steps;
 
 	for (let i = 0; i < steps; i++) {
-		applyControls(state, subDt / steps);
+		applyControls(state, subDt / steps, realSubDt);
 
-		physicsStep(state.satellite, dt * timescale, input);
+		physicsStep(state.satellite, subDt / steps, input);
 	}
 
 	state.satellite.orbit = computeOrbitalElements(state.satellite);
